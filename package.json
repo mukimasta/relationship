@@ -1,0 +1,12 @@
+{
+  "name": "relationship-mvp-preview",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview:interactive": "node preview-interactive.mjs",
+    "preview:matrix": "node preview-matrix.mjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^24.0.0"
+  }
+}
