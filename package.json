@@ -3,10 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "preview:interactive": "node preview-interactive.mjs",
-    "preview:matrix": "node preview-matrix.mjs"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "puppeteer-core": "^24.0.0"
+    "typescript": "~5.7.0",
+    "vite": "^6.0.0"
   }
 }

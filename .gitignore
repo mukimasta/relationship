@@ -1,11 +1,9 @@
 # dependencies
 node_modules/
 
+# build
+dist/
+
 # OS / editor
 .DS_Store
 Thumbs.db
-
-# preview script output (regenerate with npm run / ./preview-*.sh)
-preview-steps/
-preview-matrix/
-mvp-preview.png
