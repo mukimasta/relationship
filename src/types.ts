@@ -10,11 +10,3 @@ export interface WordItem {
   readonly ri: number;
   readonly ci: number;
 }
-
-export type PageId =
-  | 'page-welcome'
-  | 'page-alias'
-  | 'page-slider-h'
-  | 'page-slider-v'
-  | 'page-result'
-  | 'page-final';

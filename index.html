@@ -2,93 +2,59 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <title>关系工具书</title>
   </head>
   <body>
-    <!-- PAGE 1: WELCOME -->
-    <div class="page active" id="page-welcome">
-      <div class="welcome-title">关系工具书</div>
-      <div class="welcome-sub">两个问题，十秒定位<br />帮你给说不清的关系感受命名</div>
-      <button type="button" class="btn" id="btn-welcome-start">开始</button>
-    </div>
+    <div id="app">
+      <div class="main-ambient" aria-hidden="true"></div>
+      <div id="stardust" class="stardust-layer" aria-hidden="true"></div>
 
-    <!-- PAGE 2: ALIAS -->
-    <div class="page" id="page-alias">
-      <div class="alias-prompt">想一个人<br />给 ta 起个代号</div>
-      <input class="alias-input" id="alias-input" type="text" placeholder="代号" maxlength="10" autocomplete="off" />
-      <button type="button" class="btn" id="btn-alias-next">下一步</button>
-      <div class="skip-link" id="skip-alias" role="button" tabindex="0">跳过，不起名</div>
-    </div>
-
-    <!-- PAGE 3: HORIZONTAL SLIDER -->
-    <div class="page slider-page" id="page-slider-h">
-      <div class="slider-question">
-        想到 <span class="alias-name" id="q1-alias">ta</span><br />你的身体是紧的，还是松的？
-      </div>
-      <div class="h-slider-wrap" id="h-slider">
-        <div class="h-slider-track"></div>
-        <div class="h-slider-fill-left" id="h-fill-left"></div>
-        <div class="h-slider-fill-right" id="h-fill-right"></div>
-        <div class="slider-thumb h-slider-thumb" id="h-thumb"></div>
-      </div>
-      <div class="slider-labels">
-        <span class="slider-label">紧</span>
-        <span class="slider-label">松</span>
-      </div>
-      <div style="height: 40px"></div>
-      <div class="slider-btn-wrap">
-        <button type="button" class="btn disabled" id="btn-h-next">下一步</button>
-      </div>
-    </div>
-
-    <!-- PAGE 4: VERTICAL SLIDER -->
-    <div class="page slider-page" id="page-slider-v">
-      <div class="slider-question">
-        <span class="alias-name" id="q2-alias">ta</span> 在你脑子里<br />占多大一块地方？
-      </div>
-      <div class="v-slider-container">
-        <div class="v-labels">
-          <span class="v-label">时刻都在</span>
-          <span class="v-label">偶尔浮现</span>
-        </div>
-        <div class="v-slider-wrap" id="v-slider">
-          <div class="v-slider-track"></div>
-          <div class="v-slider-fill-top" id="v-fill-top"></div>
-          <div class="v-slider-fill-bottom" id="v-fill-bottom"></div>
-          <div class="slider-thumb v-slider-thumb" id="v-thumb"></div>
+      <div id="viewport">
+        <div id="stage">
+          <svg
+            id="circles-svg"
+            viewBox="-6 -6 112 112"
+            preserveAspectRatio="xMidYMid meet"
+            aria-hidden="true"
+          >
+            <g id="ring-lines"></g>
+            <g id="ring-labels" aria-hidden="true"></g>
+            <g id="dots-root"></g>
+          </svg>
         </div>
       </div>
-      <div class="slider-btn-wrap">
-        <button type="button" class="btn disabled" id="btn-v-next">看结果</button>
-      </div>
-    </div>
 
-    <!-- PAGE 5: RESULT GRID -->
-    <div class="page" id="page-result">
-      <div class="result-alias" id="result-alias"></div>
-      <div class="result-prompt">哪个词最准？点它。</div>
-      <div class="grid-wrapper">
-        <div class="grid-axis-label grid-axis-top">高投入</div>
-        <div class="grid-axis-label grid-axis-bottom">低投入</div>
-        <div class="grid-axis-label grid-axis-left">消耗</div>
-        <div class="grid-axis-label grid-axis-right">滋养</div>
-        <div class="grid-container" id="grid-container">
-          <div class="quadrant-grid q-tl" id="grid-tl"></div>
-          <div class="quadrant-grid q-tr" id="grid-tr"></div>
-          <div class="quadrant-grid q-bl" id="grid-bl"></div>
-          <div class="quadrant-grid q-br" id="grid-br"></div>
-          <div class="user-dot" id="user-dot"></div>
+      <p id="empty-hint" class="empty-hint">
+        <span class="empty-hint-line">想一个人，开始</span>
+      </p>
+
+      <footer class="main-dock">
+        <button type="button" id="btn-clear" class="btn-chrome">清空</button>
+        <button type="button" id="fab-add" class="fab" aria-label="添加一个人">+</button>
+        <button type="button" id="btn-flow" class="btn-chrome">关系流转</button>
+      </footer>
+
+      <div id="sheet-backdrop" class="sheet-backdrop" hidden></div>
+      <aside id="person-sheet" class="person-sheet" hidden>
+        <div class="sheet-handle"></div>
+        <h2 id="sheet-alias" class="sheet-alias"></h2>
+        <p id="sheet-word" class="sheet-word"></p>
+        <p id="sheet-time" class="sheet-time"></p>
+        <div class="sheet-actions">
+          <button type="button" id="sheet-retest" class="sheet-btn">重新感受</button>
+          <button type="button" id="sheet-history" class="sheet-btn sheet-btn-ghost">查看记录</button>
         </div>
-      </div>
-    </div>
+      </aside>
 
-    <!-- PAGE 6: FINAL -->
-    <div class="page" id="page-final">
-      <div class="final-alias" id="final-alias"></div>
-      <div class="final-word" id="final-word"></div>
-      <div style="height: 48px"></div>
-      <button type="button" class="btn" id="btn-final-restart">再测一次</button>
+      <div id="history-backdrop" class="sheet-backdrop" hidden></div>
+      <section id="history-panel" class="history-panel" hidden>
+        <header class="history-header">
+          <h2 id="history-title"></h2>
+          <button type="button" id="history-close" class="history-close" aria-label="关闭">×</button>
+        </header>
+        <div id="history-list" class="history-list"></div>
+      </section>
     </div>
 
     <script type="module" src="/src/main.ts"></script>
