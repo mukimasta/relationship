@@ -1162,6 +1162,10 @@ html[lang="en"] .grid-axis-right {
   opacity: 0.48;
 }
 
+.flow-grid-empty .word-cell {
+  opacity: 1 !important;
+}
+
 .grid-container.flow-grid {
   display: block;
   position: relative;

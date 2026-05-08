@@ -92,13 +92,13 @@ export function openFlowMap(people: Person[], onClose?: () => void): void {
   }
 
   const totalAssessments = people.reduce((n, p) => n + p.assessments.length, 0);
+  emptyEl.hidden = true;
+  sectionEl.hidden = false;
+  buildWordCells(quadrants);
+
   if (totalAssessments === 0) {
-    emptyEl.hidden = false;
-    sectionEl.hidden = true;
+    sectionEl.classList.add('flow-grid-empty');
   } else {
-    emptyEl.hidden = true;
-    sectionEl.hidden = false;
-    buildWordCells(quadrants);
 
     const svgNS = 'http://www.w3.org/2000/svg';
 
