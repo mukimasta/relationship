@@ -1,3 +1,4 @@
+import { t, tWord } from '../i18n';
 import { displayColorForAssessment } from '../model/colors';
 import type { Assessment, Person } from '../model/person';
 import { buildWordCells } from './word-picker';
@@ -39,15 +40,15 @@ function flowMapHtml(): string {
   return `
 <div class="flow-map-overlay" id="flow-map-overlay" role="dialog" aria-modal="true" aria-labelledby="flow-map-title">
   <div class="flow-map-panel">
-    <button type="button" class="flow-map-close" id="flow-map-close" aria-label="关闭">×</button>
-    <h2 class="flow-map-title" id="flow-map-title">关系位置与流转</h2>
-    <p class="flow-map-hint">所有人在词表平面上的测评位置；同一人按时间连线，越早越淡、越新越实。</p>
-    <div id="flow-map-empty" class="flow-map-empty" hidden>还没有测评记录。先添加一个人并完成感受流程吧。</div>
+    <button type="button" class="flow-map-close" id="flow-map-close" aria-label="${t('close')}">×</button>
+    <h2 class="flow-map-title" id="flow-map-title">${t('flowTitle')}</h2>
+    <p class="flow-map-hint">${t('flowHint')}</p>
+    <div id="flow-map-empty" class="flow-map-empty" hidden>${t('flowEmpty')}</div>
     <div class="grid-wrapper flow-map-grid-wrap" id="flow-map-grid-section" hidden>
-      <div class="grid-axis-label grid-axis-top">高投入</div>
-      <div class="grid-axis-label grid-axis-bottom">低投入</div>
-      <div class="grid-axis-label grid-axis-left">消耗</div>
-      <div class="grid-axis-label grid-axis-right">滋养</div>
+      <div class="grid-axis-label grid-axis-top">${t('axisTop')}</div>
+      <div class="grid-axis-label grid-axis-bottom">${t('axisBottom')}</div>
+      <div class="grid-axis-label grid-axis-left">${t('axisLeft')}</div>
+      <div class="grid-axis-label grid-axis-right">${t('axisRight')}</div>
       <div class="grid-container flow-grid" id="flow-grid-root">
         <div class="flow-quadrants" id="flow-quadrants"></div>
         <svg class="flow-lines-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -142,7 +143,7 @@ export function openFlowMap(people: Person[], onClose?: () => void): void {
         marker.className = 'flow-marker';
         marker.style.left = `${x}%`;
         marker.style.top = `${y}%`;
-        marker.title = `${person.alias} · ${a.word} · ${new Date(a.at).toLocaleString()}`;
+        marker.title = `${person.alias} · ${tWord(a.word)} · ${new Date(a.at).toLocaleString()}`;
 
         const dot = document.createElement('div');
         dot.className = 'flow-dot';

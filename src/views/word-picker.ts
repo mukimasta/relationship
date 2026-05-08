@@ -1,5 +1,6 @@
 import { ALL_WORDS } from '../data/word-model';
 import { WORDS_BY_QUADRANT } from '../data/words';
+import { tWord } from '../i18n';
 import type { QuadrantKey } from '../types';
 import type { WordItem } from '../types';
 
@@ -23,7 +24,7 @@ export function buildWordCells(container: HTMLElement): void {
       row.forEach((text) => {
         const cell = document.createElement('div');
         cell.className = `word-cell r${ri}`;
-        cell.textContent = text;
+        cell.textContent = tWord(text);
         cell.dataset.index = String(globalIndex);
         el.appendChild(cell);
         globalIndex += 1;

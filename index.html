@@ -26,13 +26,15 @@
       </div>
 
       <p id="empty-hint" class="empty-hint">
-        <span class="empty-hint-line">想一个人，开始</span>
+        <span class="empty-hint-line" data-i18n="emptyHint">想一个人，开始</span>
       </p>
 
+      <button type="button" id="btn-lang" class="btn-lang">EN</button>
+
       <footer class="main-dock">
-        <button type="button" id="btn-clear" class="btn-chrome">清空</button>
-        <button type="button" id="fab-add" class="fab" aria-label="添加一个人">+</button>
-        <button type="button" id="btn-flow" class="btn-chrome">关系流转</button>
+        <button type="button" id="btn-clear" class="btn-chrome" data-i18n="btnClear">清空</button>
+        <button type="button" id="fab-add" class="fab" aria-label="添加一个人" data-i18n-aria="fabAddLabel">+</button>
+        <button type="button" id="btn-flow" class="btn-chrome" data-i18n="btnFlow">关系流转</button>
       </footer>
 
       <div id="sheet-backdrop" class="sheet-backdrop" hidden></div>
@@ -42,8 +44,11 @@
         <p id="sheet-word" class="sheet-word"></p>
         <p id="sheet-time" class="sheet-time"></p>
         <div class="sheet-actions">
-          <button type="button" id="sheet-retest" class="sheet-btn">重新感受</button>
-          <button type="button" id="sheet-history" class="sheet-btn sheet-btn-ghost">查看记录</button>
+          <button type="button" id="sheet-retest" class="sheet-btn" data-i18n="sheetRetest">重新感受</button>
+          <button type="button" id="sheet-history" class="sheet-btn sheet-btn-ghost" data-i18n="sheetHistory">查看记录</button>
+        </div>
+        <div class="sheet-delete-wrap">
+          <button type="button" id="sheet-delete" class="sheet-delete" data-i18n="sheetDelete">删除</button>
         </div>
       </aside>
 
@@ -51,7 +56,7 @@
       <section id="history-panel" class="history-panel" hidden>
         <header class="history-header">
           <h2 id="history-title"></h2>
-          <button type="button" id="history-close" class="history-close" aria-label="关闭">×</button>
+          <button type="button" id="history-close" class="history-close" aria-label="关闭" data-i18n-aria="close">×</button>
         </header>
         <div id="history-list" class="history-list"></div>
       </section>

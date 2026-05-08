@@ -1,3 +1,4 @@
+import { t, tWord } from '../i18n';
 import { gridCellColor } from '../model/colors';
 import type { Assessment, Person, Ring } from '../model/person';
 import { newId } from '../lib/id';
@@ -28,35 +29,35 @@ function wizardHtml(): string {
   return `
 <div class="wizard-overlay" id="wizard-overlay" role="dialog" aria-modal="true">
   <div class="wizard-panel">
-    <button type="button" class="wizard-close" id="wizard-close" aria-label="关闭">×</button>
+    <button type="button" class="wizard-close" id="wizard-close" aria-label="${t('close')}">×</button>
 
     <section class="wiz-step" data-wiz-step="alias">
-      <div class="alias-prompt">想一个人<br />给 ta 起个代号</div>
-      <input type="text" class="alias-input" id="wiz-alias" maxlength="24" autocomplete="off" placeholder="代号" />
-      <button type="button" class="btn" id="wiz-next-alias">下一步</button>
+      <div class="alias-prompt">${t('aliasPrompt')}</div>
+      <input type="text" class="alias-input" id="wiz-alias" maxlength="24" autocomplete="off" placeholder="${t('aliasPlaceholder')}" />
+      <button type="button" class="btn" id="wiz-next-alias">${t('nextStep')}</button>
     </section>
 
     <section class="wiz-step" data-wiz-step="ring" hidden>
-      <div class="alias-prompt">ta 在哪个圈？</div>
-      <p class="ring-hint">选一个最贴近你此刻感受的圈</p>
+      <div class="alias-prompt">${t('ringPrompt')}</div>
+      <p class="ring-hint">${t('ringHint')}</p>
       <div class="ring-pick">
         <button type="button" class="ring-card" data-ring="inner">
-          <span class="ring-card-title">内圈</span>
-          <span class="ring-card-desc">可以打电话倾诉的人</span>
+          <span class="ring-card-title">${t('ringInner')}</span>
+          <span class="ring-card-desc">${t('ringInnerDesc')}</span>
         </button>
         <button type="button" class="ring-card" data-ring="middle">
-          <span class="ring-card-title">中圈</span>
-          <span class="ring-card-desc">有好感但不常联系的人</span>
+          <span class="ring-card-title">${t('ringMiddle')}</span>
+          <span class="ring-card-desc">${t('ringMiddleDesc')}</span>
         </button>
         <button type="button" class="ring-card" data-ring="outer">
-          <span class="ring-card-title">外圈</span>
-          <span class="ring-card-desc">生活里存在但不亲近的人</span>
+          <span class="ring-card-title">${t('ringOuter')}</span>
+          <span class="ring-card-desc">${t('ringOuterDesc')}</span>
         </button>
       </div>
     </section>
 
     <section class="wiz-step slider-page" data-wiz-step="s1" hidden>
-      <div class="slider-question">想到 <span class="alias-name" id="wiz-q1-alias">ta</span><br />你的身体是紧的，还是松的？</div>
+      <div class="slider-question">${t('s1Question1')}<span class="alias-name" id="wiz-q1-alias">${t('defaultAlias')}</span>${t('s1Question2')}</div>
       <div class="h-slider-wrap" id="wiz-h-slider">
         <div class="h-slider-track"></div>
         <div class="h-slider-fill-left" id="wiz-h-fill-left"></div>
@@ -64,21 +65,21 @@ function wizardHtml(): string {
         <div class="slider-thumb h-slider-thumb" id="wiz-h-thumb"></div>
       </div>
       <div class="slider-labels">
-        <span class="slider-label">紧</span>
-        <span class="slider-label">松</span>
+        <span class="slider-label">${t('sliderTight')}</span>
+        <span class="slider-label">${t('sliderLoose')}</span>
       </div>
       <div style="height:40px"></div>
       <div class="slider-btn-wrap">
-        <button type="button" class="btn disabled" id="wiz-next-s1">下一步</button>
+        <button type="button" class="btn disabled" id="wiz-next-s1">${t('nextStep')}</button>
       </div>
     </section>
 
     <section class="wiz-step slider-page" data-wiz-step="s2" hidden>
-      <div class="slider-question"><span class="alias-name" id="wiz-q2-alias">ta</span> 在你脑子里<br />占多大一块地方？</div>
+      <div class="slider-question">${t('s2Question1')}<span class="alias-name" id="wiz-q2-alias">${t('defaultAlias')}</span>${t('s2Question2')}</div>
       <div class="v-slider-container">
         <div class="v-labels">
-          <span class="v-label">时刻都在</span>
-          <span class="v-label">偶尔浮现</span>
+          <span class="v-label">${t('sliderAlways')}</span>
+          <span class="v-label">${t('sliderSometimes')}</span>
         </div>
         <div class="v-slider-wrap" id="wiz-v-slider">
           <div class="v-slider-track"></div>
@@ -88,17 +89,17 @@ function wizardHtml(): string {
         </div>
       </div>
       <div class="slider-btn-wrap">
-        <button type="button" class="btn disabled" id="wiz-next-s2">看结果</button>
+        <button type="button" class="btn disabled" id="wiz-next-s2">${t('seeResult')}</button>
       </div>
     </section>
 
     <section class="wiz-step wiz-step-result" data-wiz-step="words" hidden>
-      <div class="result-prompt wiz-result-prompt">哪个词最准？点它。</div>
+      <div class="result-prompt wiz-result-prompt">${t('pickPrompt')}</div>
       <div class="grid-wrapper wiz-grid-wrap">
-        <div class="grid-axis-label grid-axis-top">高投入</div>
-        <div class="grid-axis-label grid-axis-bottom">低投入</div>
-        <div class="grid-axis-label grid-axis-left">消耗</div>
-        <div class="grid-axis-label grid-axis-right">滋养</div>
+        <div class="grid-axis-label grid-axis-top">${t('axisTop')}</div>
+        <div class="grid-axis-label grid-axis-bottom">${t('axisBottom')}</div>
+        <div class="grid-axis-label grid-axis-left">${t('axisLeft')}</div>
+        <div class="grid-axis-label grid-axis-right">${t('axisRight')}</div>
         <div class="grid-container" id="wiz-grid-container"></div>
       </div>
     </section>
@@ -106,7 +107,7 @@ function wizardHtml(): string {
     <section class="wiz-step wiz-step-confirm" data-wiz-step="confirm" hidden>
       <div class="final-alias" id="wiz-confirm-alias"></div>
       <div class="final-word" id="wiz-confirm-word"></div>
-      <p class="wiz-confirm-sub">正在落入你的星图…</p>
+      <p class="wiz-confirm-sub">${t('confirmSub')}</p>
     </section>
   </div>
 </div>`;
@@ -193,7 +194,7 @@ export function openWizard(
   }
 
   function syncAliasLabels(): void {
-    const d = alias || 'ta';
+    const d = alias || t('defaultAlias');
     document.getElementById('wiz-q1-alias')!.textContent = d;
     document.getElementById('wiz-q2-alias')!.textContent = d;
   }
@@ -278,10 +279,10 @@ export function openWizard(
     const aliasEl = document.getElementById('wiz-confirm-alias');
     const wordEl = document.getElementById('wiz-confirm-word');
     if (aliasEl) {
-      aliasEl.textContent = alias ? `你和「${alias}」的此刻` : '你的此刻';
+      aliasEl.textContent = alias ? t('confirmAlias', alias) : t('confirmNoAlias');
     }
     if (wordEl) {
-      wordEl.textContent = pickedWord.text;
+      wordEl.textContent = tWord(pickedWord.text);
       wordEl.style.color = color;
     }
 
@@ -299,7 +300,7 @@ export function openWizard(
       if (mode.kind === 'add') {
         const person: Person = {
           id: newId(),
-          alias: alias || 'ta',
+          alias: alias || t('defaultAlias'),
           ring,
           ...randomPlacement(ring, data.people),
           assessments: [assessment],

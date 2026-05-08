@@ -151,14 +151,19 @@ body {
   cursor: grabbing;
 }
 
-/* 圆点 fill 与 glow 由 JS 写入 */
+/* 圆点渐变、描边、glow 由 JS 写入 */
 
 .person-dot-c {
   vector-effect: non-scaling-stroke;
 }
 
+.person-dot-highlight {
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
 .person-dot-label {
-  font-size: 2.75px;
+  font-size: 2.1px;
   font-family: 'Noto Serif SC', serif;
   font-weight: 500;
   fill: rgba(255, 255, 255, 0.6);
@@ -193,6 +198,36 @@ body {
 
 .empty-hint[hidden] {
   display: none;
+}
+
+.btn-lang {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top, 0px));
+  left: max(14px, env(safe-area-inset-left, 0px));
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 500;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition: all 0.3s;
+  line-height: 1;
+}
+
+.btn-lang:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-lang:active {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* 底栏：清空 — 添加 — 流转，主次分明 */
@@ -318,6 +353,29 @@ body {
 .sheet-actions {
   display: flex;
   gap: 12px;
+}
+
+.sheet-delete-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.sheet-delete {
+  padding: 2px 4px;
+  border: none;
+  background: transparent;
+  color: rgba(160, 120, 118, 0.9);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-family: inherit;
+}
+
+.sheet-delete:hover {
+  color: rgba(210, 170, 165, 0.95);
 }
 
 .sheet-btn {
@@ -678,6 +736,10 @@ body.flow-map-open #viewport {
   display: flex;
   justify-content: space-between;
   margin-top: 4px;
+  /* 与 .wiz-step 的 align-items:center 搭配：否则整行缩成两字宽，紧/松会贴在一起 */
+  align-self: stretch;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .slider-label {
@@ -756,6 +818,14 @@ body.flow-map-open #viewport {
   letter-spacing: 2px;
   writing-mode: vertical-rl;
   text-orientation: upright;
+}
+
+html[lang="en"] .v-label {
+  writing-mode: horizontal-tb;
+  text-orientation: initial;
+  letter-spacing: 0.04em;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 /* 词表网格（向导） */
@@ -938,6 +1008,25 @@ body.flow-map-open #viewport {
   transform: translateY(-50%);
   writing-mode: vertical-rl;
   text-orientation: upright;
+}
+
+html[lang="en"] .grid-axis-left {
+  writing-mode: horizontal-tb;
+  text-orientation: initial;
+  left: auto;
+  right: calc(100% + 6px);
+  transform: translateY(-50%);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+html[lang="en"] .grid-axis-right {
+  writing-mode: horizontal-tb;
+  text-orientation: initial;
+  right: auto;
+  left: calc(100% + 6px);
+  transform: translateY(-50%);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
 }
 
 .wiz-step-result {

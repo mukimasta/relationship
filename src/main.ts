@@ -1,5 +1,6 @@
 import './styles.css';
 import { getEl } from './dom';
+import { getLang, setLang, t, tWord, type Lang } from './i18n';
 import { fillStardust } from './lib/stardust';
 import { displayColorForAssessment } from './model/colors';
 import type { Person } from './model/person';
@@ -38,12 +39,28 @@ function main(): void {
   const historyList = getEl('history-list');
   const historyTitle = getEl('history-title');
 
+  const langBtn = getEl('btn-lang');
+
   let store = loadData();
   let selectedId: string | null = null;
 
   let scale = 1;
   let tx = 0;
   let ty = 0;
+
+  function applyI18n(): void {
+    document.title = t('title');
+    document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((el) => {
+      el.textContent = t(el.dataset.i18n!);
+    });
+    document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((el) => {
+      el.setAttribute('aria-label', t(el.dataset.i18nAria!));
+    });
+    langBtn.textContent = t('langToggle');
+  }
+
+  setLang(getLang());
+  applyI18n();
 
   /**
    * 必须与 CSS 中 #stage 的定位与 translate 一起生效，否则会顶掉居中。
@@ -81,7 +98,7 @@ function main(): void {
       if (!p) return;
       const last = p.assessments[p.assessments.length - 1];
       sheetAlias.textContent = p.alias;
-      sheetWord.textContent = last ? `「${last.word}」` : '—';
+      sheetWord.textContent = last ? `「${tWord(last.word)}」` : '—';
       sheetTime.textContent = last ? fmtTime(last.at) : '—';
       sheetBack.hidden = false;
       sheet.hidden = false;
@@ -115,20 +132,32 @@ function main(): void {
     });
   });
 
+  getEl('sheet-delete').addEventListener('click', () => {
+    if (!selectedId) return;
+    const p = findPerson(selectedId);
+    if (!p) return;
+    if (!confirm(t('confirmDelete', p.alias))) return;
+    store.people = store.people.filter((x) => x.id !== selectedId);
+    saveData(store);
+    closeHistory();
+    closeSheet();
+    refresh();
+  });
+
   getEl('sheet-history').addEventListener('click', () => {
     if (!selectedId) return;
     const p = findPerson(selectedId);
     if (!p) return;
     sheet.hidden = true;
     sheetBack.hidden = true;
-    historyTitle.textContent = `${p.alias} · 记录`;
+    historyTitle.textContent = t('historyTitle', p.alias);
     historyList.innerHTML = '';
     const sorted = [...p.assessments].sort((a, b) => b.at - a.at);
     for (const a of sorted) {
       const row = document.createElement('div');
       row.className = 'history-row';
       row.style.borderLeft = `3px solid ${displayColorForAssessment(a)}`;
-      row.innerHTML = `<span class="history-word">${a.word}</span><span class="history-meta">${new Date(a.at).toLocaleString()}</span>`;
+      row.innerHTML = `<span class="history-word">${tWord(a.word)}</span><span class="history-meta">${new Date(a.at).toLocaleString()}</span>`;
       historyList.appendChild(row);
     }
     histBack.hidden = false;
@@ -154,11 +183,7 @@ function main(): void {
   });
 
   getEl('btn-clear').addEventListener('click', () => {
-    if (
-      !confirm(
-        '确定清空本地所有人物与测评记录？此操作不可恢复。',
-      )
-    ) {
+    if (!confirm(t('confirmClearAll'))) {
       return;
     }
     clearAllData();
@@ -169,6 +194,14 @@ function main(): void {
     tx = 0;
     ty = 0;
     applyStageTransform();
+    refresh();
+  });
+
+  langBtn.addEventListener('click', () => {
+    const next: Lang = getLang() === 'zh' ? 'en' : 'zh';
+    setLang(next);
+    applyI18n();
+    drawRingLines(ringGroup, ringLabels);
     refresh();
   });
 

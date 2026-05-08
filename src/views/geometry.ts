@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import type { Ring } from '../model/person';
 
 /** viewBox 0 0 100 100，圆心 */
@@ -16,13 +17,16 @@ export const BANDS: Record<Ring, { min: number; max: number }> = {
 
 const THRESH = [16, 32] as const;
 
-/** 三圈名称：均在正上方，沿半径错开 */
 const UP = -Math.PI / 2;
-export const RING_LABELS: readonly { text: string; angle: number; rad: number }[] = [
-  { text: '内圈', angle: UP, rad: 11 },
-  { text: '中圈', angle: UP, rad: 24 },
-  { text: '外圈', angle: UP, rad: 41 },
+const RING_LABEL_DEFS: readonly { key: string; angle: number; rad: number }[] = [
+  { key: 'ringInner', angle: UP, rad: 11 },
+  { key: 'ringMiddle', angle: UP, rad: 24 },
+  { key: 'ringOuter', angle: UP, rad: 41 },
 ];
+
+export function getRingLabels(): readonly { text: string; angle: number; rad: number }[] {
+  return RING_LABEL_DEFS.map((d) => ({ text: t(d.key), angle: d.angle, rad: d.rad }));
+}
 
 export function ringFromRadius(r: number): Ring {
   if (r < THRESH[0]) return 'inner';

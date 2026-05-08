@@ -4,7 +4,7 @@ import {
   CIRCLE_R,
   CX,
   CY,
-  RING_LABELS,
+  getRingLabels,
   clampRadToRing,
   polarToXY,
   ringFromRadius,
@@ -167,47 +167,137 @@ export function initCircleStage(
   });
 }
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex.trim());
   if (!m) return null;
   return { r: parseInt(m[1]!, 16), g: parseInt(m[2]!, 16), b: parseInt(m[3]!, 16) };
 }
 
+function rgbToHex(r: number, g: number, b: number): string {
+  const h = (n: number) =>
+    Math.max(0, Math.min(255, Math.round(n)))
+      .toString(16)
+      .padStart(2, '0');
+  return `#${h(r)}${h(g)}${h(b)}`;
+}
+
+/** 与白色混合，t∈[0,1] */
+function lightenHex(hex: string, t: number): string {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return hex;
+  const { r, g, b } = rgb;
+  return rgbToHex(r + (255 - r) * t, g + (255 - g) * t, b + (255 - b) * t);
+}
+
+/** 与黑色混合 */
+function darkenHex(hex: string, t: number): string {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return hex;
+  const { r, g, b } = rgb;
+  return rgbToHex(r * (1 - t), g * (1 - t), b * (1 - t));
+}
+
 function glowFilterForColor(hex: string): string {
   const rgb = hexToRgb(hex);
   if (!rgb) return '';
   const { r, g, b } = rgb;
-  return `drop-shadow(0 0 2px rgba(${r},${g},${b},0.65)) drop-shadow(0 0 7px rgba(${r},${g},${b},0.35))`;
+  return `drop-shadow(0 0 1.5px rgba(${r},${g},${b},0.42)) drop-shadow(0 0 4px rgba(${r},${g},${b},0.22))`;
+}
+
+function appendRadialDotGradient(defs: SVGDefsElement, id: string, baseHex: string): void {
+  const hi = lightenHex(baseHex, 0.42);
+  const lo = darkenHex(baseHex, 0.22);
+  const rad = document.createElementNS(SVG_NS, 'radialGradient');
+  rad.setAttribute('id', id);
+  rad.setAttribute('cx', '32%');
+  rad.setAttribute('cy', '28%');
+  rad.setAttribute('r', '100%');
+  rad.setAttribute('fx', '28%');
+  rad.setAttribute('fy', '22%');
+  rad.setAttribute('gradientUnits', 'objectBoundingBox');
+
+  const s0 = document.createElementNS(SVG_NS, 'stop');
+  s0.setAttribute('offset', '0%');
+  s0.setAttribute('stop-color', hi);
+
+  const s1 = document.createElementNS(SVG_NS, 'stop');
+  s1.setAttribute('offset', '52%');
+  s1.setAttribute('stop-color', baseHex);
+
+  const s2 = document.createElementNS(SVG_NS, 'stop');
+  s2.setAttribute('offset', '100%');
+  s2.setAttribute('stop-color', lo);
+
+  rad.appendChild(s0);
+  rad.appendChild(s1);
+  rad.appendChild(s2);
+  defs.appendChild(rad);
 }
 
 export function renderDots(dotsRoot: SVGGElement, people: Person[]): void {
   dotsRoot.innerHTML = '';
+
+  const defs = document.createElementNS(SVG_NS, 'defs');
+  const clip = document.createElementNS(SVG_NS, 'clipPath');
+  clip.setAttribute('id', 'person-dot-clip');
+  const clipC = document.createElementNS(SVG_NS, 'circle');
+  clipC.setAttribute('cx', '0');
+  clipC.setAttribute('cy', '0');
+  clipC.setAttribute('r', '1.3');
+  clip.appendChild(clipC);
+  defs.appendChild(clip);
+
+  for (const p of people) {
+    const last = p.assessments[p.assessments.length - 1];
+    const base = last ? displayColorForAssessment(last) : '#888';
+    appendRadialDotGradient(defs, `dot-grad-${p.id}`, base);
+  }
+  dotsRoot.appendChild(defs);
+
   for (const p of people) {
     const { x, y } = polarToXY(p.angle, p.rad);
     const last = p.assessments[p.assessments.length - 1];
-    const fill = last ? displayColorForAssessment(last) : '#888';
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const base = last ? displayColorForAssessment(last) : '#888';
+
+    const g = document.createElementNS(SVG_NS, 'g');
     g.classList.add('person-g');
     g.setAttribute('data-person-id', p.id);
     g.setAttribute('data-ring', p.ring);
     g.setAttribute('transform', `translate(${x},${y})`);
 
-    const inner = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const inner = document.createElementNS(SVG_NS, 'g');
     inner.classList.add('person-dot-wrap');
+    inner.setAttribute('style', `filter: ${glowFilterForColor(base)}`);
 
-    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    c.setAttribute('r', '2.75');
-    c.setAttribute('fill', fill);
+    const shell = document.createElementNS(SVG_NS, 'g');
+    shell.setAttribute('clip-path', 'url(#person-dot-clip)');
+
+    const c = document.createElementNS(SVG_NS, 'circle');
+    c.setAttribute('r', '1.3');
+    c.setAttribute('fill', `url(#dot-grad-${p.id})`);
     c.setAttribute('class', 'person-dot-c');
-    c.setAttribute('style', `filter: ${glowFilterForColor(fill)}`);
+    c.setAttribute('stroke', 'rgba(255,255,255,0.38)');
+    c.setAttribute('stroke-width', '0.21');
 
-    const tx = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    tx.setAttribute('x', '4');
-    tx.setAttribute('y', '1.2');
+    const hi = document.createElementNS(SVG_NS, 'circle');
+    hi.setAttribute('cx', '-0.62');
+    hi.setAttribute('cy', '-0.62');
+    hi.setAttribute('r', '0.81');
+    hi.setAttribute('class', 'person-dot-highlight');
+    hi.setAttribute('fill', 'rgba(255,255,255,0.2)');
+
+    shell.appendChild(c);
+    shell.appendChild(hi);
+
+    const tx = document.createElementNS(SVG_NS, 'text');
+    tx.setAttribute('x', '2.68');
+    tx.setAttribute('y', '0.58');
     tx.setAttribute('class', 'person-dot-label');
     tx.textContent = p.alias;
 
-    inner.appendChild(c);
+    inner.appendChild(shell);
     inner.appendChild(tx);
     g.appendChild(inner);
     dotsRoot.appendChild(g);
@@ -217,17 +307,17 @@ export function renderDots(dotsRoot: SVGGElement, people: Person[]): void {
 function drawRingLabels(labelsGroup: SVGGElement): void {
   const NS = 'http://www.w3.org/2000/svg';
   labelsGroup.innerHTML = '';
-  for (const { text, angle, rad } of RING_LABELS) {
+  for (const { text, angle, rad } of getRingLabels()) {
     const x = CX + rad * Math.cos(angle);
     const y = CY + rad * Math.sin(angle);
-    const t = document.createElementNS(NS, 'text');
-    t.setAttribute('x', String(x));
-    t.setAttribute('y', String(y));
-    t.setAttribute('text-anchor', 'middle');
-    t.setAttribute('dominant-baseline', 'middle');
-    t.setAttribute('class', 'ring-label');
-    t.textContent = text;
-    labelsGroup.appendChild(t);
+    const el = document.createElementNS(NS, 'text');
+    el.setAttribute('x', String(x));
+    el.setAttribute('y', String(y));
+    el.setAttribute('text-anchor', 'middle');
+    el.setAttribute('dominant-baseline', 'middle');
+    el.setAttribute('class', 'ring-label');
+    el.textContent = text;
+    labelsGroup.appendChild(el);
   }
 }
 
